@@ -68,6 +68,9 @@ jobs:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
+      
+      - name: Save ECS Task Definition to prod-taskdefinition.json
+        run: echo "${{ steps.task-def.outputs.task-definition }}" > ${{ env.ECS_TASK_DEFINITION }}
 
       - name: Deploy Amazon ECS task definition for API service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
