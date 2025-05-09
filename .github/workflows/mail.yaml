@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  AWS_REGION: us-west-2                 
+  AWS_REGION: us-east-2                 
   ECR_REPOSITORY: 650576187890.dkr.ecr.us-east-2.amazonaws.com/test     
   ECS_SERVICE: test-service         
   ECS_CLUSTER: test-cluster            
@@ -58,6 +58,6 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
-          cluster: test-cluster
+          cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
           
