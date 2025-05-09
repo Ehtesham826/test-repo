@@ -44,6 +44,14 @@ jobs:
           variables: |
             container_port=${{ env.PORT }}
             host_port=${{ env.PORT }}
+      
+      - name: Get Updated ECS Task Definition After Terraform Apply
+        id: ecs-task-def
+        run: |
+          task_def_arn=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }} --query "services[0].taskDefinition" --output text)
+          task_def=$(aws ecs describe-task-definitions --task-definitions $task_def_arn --query "taskDefinition" --output json)
+          echo "$task_def" > ${{ env.ECS_TASK_DEFINITION }}
+          more .github/workflows/prod-taskdefinition.json  
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -69,8 +77,6 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
       
-      - name: Save ECS Task Definition to prod-taskdefinition.json
-        run: echo "${{ steps.task-def.outputs.task-definition }}" > ${{ env.ECS_TASK_DEFINITION }}
 
       - name: Deploy Amazon ECS task definition for API service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
